@@ -7,11 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace BowlingGameKata
 {
-    public  class Frame
+    public class Frame
     {
-        public static int previousTotalScore;
-        public  BowlingTurn FirstTurn { get; private set; }
-        public  BowlingTurn SecondTurn { get; private set; }
+        public static int PreviousTotalScore;
+        public BowlingTurn FirstTurn { get; private set; }
+        public BowlingTurn SecondTurn { get; private set; }
         public int CurrentFrameFinalScore { get; private set; }
 
         private enum FrameType
@@ -28,17 +28,18 @@ namespace BowlingGameKata
             _frameType = FrameType.OPEN;
         }
 
-        public void FirstGo(int pinsKnocked)
+        public int FirstGo(int pinsKnocked)
         {
             if (pinsKnocked >= 0 && pinsKnocked <= 10)
             {
                 FirstTurn.Score = pinsKnocked;
-                _frameType = (pinsKnocked == 10) ? FrameType.STRIKE: FrameType.OPEN;
+                _frameType = (pinsKnocked == 10) ? FrameType.STRIKE : FrameType.OPEN;
             }
             else
             {
                 throw new Exception("Invalid number of pins");
             }
+            return FirstTurn.Score;
         }
 
         public void SecondGo(int pinsKnocked)
@@ -46,12 +47,12 @@ namespace BowlingGameKata
             if (_frameType == FrameType.STRIKE)
                 throw new Exception("You Scored STRIKE In First Turn! You Cant Play Second Turn");
 
-           if(FirstTurn != null && (FirstTurn.Score + pinsKnocked <=10))
+            if (FirstTurn != null && (FirstTurn.Score + pinsKnocked <= 10))
             {
                 SecondTurn.Score = pinsKnocked;
-                _frameType = (pinsKnocked + FirstTurn.Score == 10) ? FrameType.SPARE : FrameType.OPEN; 
+                _frameType = (pinsKnocked + FirstTurn.Score == 10) ? FrameType.SPARE : FrameType.OPEN;
             }
         }
-       
+
     }
 }
