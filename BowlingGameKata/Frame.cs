@@ -9,11 +9,11 @@ namespace BowlingGameKata
 {
     public class Frame
     {
-        public static int PreviousTotalScore;
-        public BowlingTurn FirstTurn { get; private set; }
-        public BowlingTurn SecondTurn { get; private set; }
+        public static int PreviousTotalScore { get; set;}
+        public int FirstTurnScore { get; private set; }
+        public int SecondTurnScore { get; private set; }
         public int CurrentFrameFinalScore { get; private set; }
-
+        private const int TURN_NOT_STARTED = -1;
         private enum FrameType
         {
             STRIKE,
@@ -23,35 +23,58 @@ namespace BowlingGameKata
         private FrameType _frameType;
         public Frame()
         {
-            FirstTurn = new();
-            SecondTurn = new();
-            _frameType = FrameType.OPEN;
+            FirstTurnScore = TURN_NOT_STARTED;
+            SecondTurnScore = TURN_NOT_STARTED;
+            _frameType = FrameType.OPEN; 
         }
 
         public int FirstGo(int pinsKnocked)
         {
             if (pinsKnocked >= 0 && pinsKnocked <= 10)
             {
-                FirstTurn.Score = pinsKnocked;
+                FirstTurnScore = pinsKnocked;
                 _frameType = (pinsKnocked == 10) ? FrameType.STRIKE : FrameType.OPEN;
             }
             else
             {
                 throw new Exception("Invalid number of pins");
             }
-            return FirstTurn.Score;
+            return FirstTurnScore;
         }
 
-        public void SecondGo(int pinsKnocked)
+        public int SecondGo(int pinsKnocked)
         {
             if (_frameType == FrameType.STRIKE)
-                throw new Exception("You Scored STRIKE In First Turn! You Cant Play Second Turn");
-
-            if (FirstTurn != null && (FirstTurn.Score + pinsKnocked <= 10))
             {
-                SecondTurn.Score = pinsKnocked;
-                _frameType = (pinsKnocked + FirstTurn.Score == 10) ? FrameType.SPARE : FrameType.OPEN;
+                SecondTurnScore = 0;
+                return 0;
             }
+            if (FirstTurnScore != TURN_NOT_STARTED && (FirstTurnScore+ pinsKnocked <= 10))
+            {
+                SecondTurnScore = pinsKnocked;
+                _frameType = (pinsKnocked + FirstTurnScore == 10) ? FrameType.SPARE : FrameType.OPEN;
+            }
+            return SecondTurnScore;
+        }
+
+       private int CalculateScore(int tempScore, FrameType type)
+        {
+            if(type == FrameType.OPEN || type == FrameType.SPARE)
+            PreviousTotalScore += tempScore;
+
+            switch(type)
+            {
+                case FrameType.STRIKE:
+                    // this frame score 10 + next turn score
+                    break;
+                    case FrameType.OPEN:
+                    
+                    break;
+                    case FrameType.SPARE:
+                    break;
+            }
+
+            return PreviousTotalScore;
         }
 
     }
